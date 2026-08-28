@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>Roleta de Filmes</title>
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#0f0c29">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Roleta">
+
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    overflow-x: hidden;
+}
+
+body {
+
+    font-family: 'Segoe UI', Arial, sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #2b1055,
+            #0f0c29
+        );
+
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    margin: 0;
+
+    padding:
+        20px
+        16px
+        calc(20px + env(safe-area-inset-bottom));
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    color: white;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =========================================================
+   TÍTULO
+========================================================= */
+
+h1 {
+
+    margin: 0 0 4px 0;
+
+    text-shadow:
+        0 0 12px rgba(255, 215, 0, 0.6);
+
+    font-size:
+        clamp(20px, 6vw, 28px);
+
+    text-align: center;
+}
+
+
+.subtitulo {
+
+    color: #d8d0f0;
+
+    margin-bottom:
+        clamp(20px, 6vw, 32px);
+
+    font-size: 13px;
+
+    text-align: center;
+
+    max-width: 320px;
+}
+
+
+/* =========================================================
+   ROLETA
+========================================================= */
+
+.roleta {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap:
+        clamp(6px, 3vw, 14px);
+
+    margin-bottom: 18px;
+
+    width: 100%;
+
+    max-width: 420px;
+}
+
+
+/* =========================================================
+   SLOTS
+========================================================= */
+
+.slot {
+
+    background: #1a1330;
+
+    border:
+        4px solid #4a3a7a;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    position: relative;
+
+    box-shadow:
+        inset 0 0 20px rgba(0,0,0,0.6);
+
+    flex-shrink: 0;
+}
+
+
+/* Slots laterais */
+
+.slot-lateral {
+
+    width:
+        clamp(70px, 24vw, 110px);
+
+    height:
+        clamp(108px, 37vw, 170px);
+
+    opacity: 0.55;
+
+    transform: scale(0.92);
+}
+
+
+/* Slot central */
+
+.slot-central {
+
+    width:
+        clamp(100px, 34vw, 160px);
+
+    height:
+        clamp(150px, 51vw, 240px);
+
+    border-color: #ffd700;
+
+    box-shadow:
+        0 0 24px rgba(255, 215, 0, 0.6),
+        inset 0 0 20px rgba(0,0,0,0.6);
+
+    z-index: 2;
+}
+
+
+/* Imagens */
+
+.slot img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+/* Caso a imagem não exista */
+
+.placeholder {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 12px;
+
+    color: #8b7fb0;
+
+    text-align: center;
+
+    padding: 8px;
+}
+
+
+/* =========================================================
+   ANIMAÇÃO
+========================================================= */
+
+@keyframes deslizar {
+
+    from {
+
+        transform:
+            translateX(40px);
+
+        opacity: 0.2;
+    }
+
+    to {
+
+        transform:
+            translateX(0);
+
+        opacity: 1;
+    }
+}
+
+
+.slot img.deslizando,
+.slot .placeholder.deslizando {
+
+    animation:
+        deslizar 0.12s ease-out;
+}
+
+
+/* =========================================================
+   PONTEIRO
+========================================================= */
+
+.ponteiro-area {
+
+    display: flex;
+
+    justify-content: center;
+
+    margin-bottom: 8px;
+}
+
+
+.ponteiro {
+
+    width: 0;
+
+    height: 0;
+
+    border-left:
+        14px solid transparent;
+
+    border-right:
+        14px solid transparent;
+
+    border-bottom:
+        22px solid #ffd700;
+
+    filter:
+        drop-shadow(
+            0 2px 4px rgba(0,0,0,0.5)
+        );
+}
+
+
+/* =========================================================
+   BOTÃO
+========================================================= */
+
+#sortearBtn {
+
+    margin-top: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff6a88,
+            #ff9a8b
+        );
+
+    color: white;
+
+    border: none;
+
+    padding:
+        14px 36px;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    border-radius: 30px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 16px
+        rgba(255, 106, 136, 0.5);
+
+    transition:
+        transform 0.15s,
+        opacity 0.2s;
+
+    width:
+        min(100%, 280px);
+
+    max-width: 90vw;
+}
+
+
+#sortearBtn:active {
+
+    transform:
+        scale(0.96);
+}
+
+
+#sortearBtn:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RESULTADO
+========================================================= */
+
+.resultado-card {
+
+    margin-top: 24px;
+
+    background: white;
+
+    color: #2b1055;
+
+    border-radius: 16px;
+
+    padding:
+        18px 24px;
+
+    text-align: center;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0,0,0,0.4);
+
+    opacity: 0;
+
+    transform:
+        scale(0.7);
+
+    transition:
+        opacity 0.4s,
+        transform 0.4s;
+
+    display: none;
+
+    width:
+        min(100%, 280px);
+}
+
+
+.resultado-card.show {
+
+    opacity: 1;
+
+    transform:
+        scale(1);
+
+    display: block;
+}
+
+
+.resultado-card .selo {
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    color: #ff6a88;
+
+    font-weight: 700;
+
+    margin-bottom: 4px;
+}
+
+
+.resultado-card h2 {
+
+    margin: 0;
+
+    font-size: 19px;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   CELULARES PEQUENOS
+========================================================= */
+
+@media (max-width: 340px) {
+
+    .roleta {
+
+        gap: 6px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>🎰 Roleta de Filmes</h1>
+
+<p class="subtitulo">
+    Clique em girar e veja os pôsteres passando até parar no escolhido!
+</p>
+
+
+<!-- ========================================================
+     ROLETA
+========================================================= -->
+
+<div class="roleta">
+
+    <div
+        class="slot slot-lateral"
+        id="slotEsquerda">
+    </div>
+
+
+    <div
+        class="slot slot-central"
+        id="slotCentro">
+    </div>
+
+
+    <div
+        class="slot slot-lateral"
+        id="slotDireita">
+    </div>
+
+</div>
+
+
+<!-- ========================================================
+     PONTEIRO
+========================================================= -->
+
+<div class="ponteiro-area">
+
+    <div class="ponteiro"></div>
+
+</div>
+
+
+<!-- ========================================================
+     BOTÃO
+========================================================= -->
+
+<button id="sortearBtn">
+
+    GIRAR ROLETA
+
+</button>
+
+
+<!-- ========================================================
+     RESULTADO
+========================================================= -->
+
+<div
+    class="resultado-card"
+    id="resultadoCard">
+
+    <div class="selo">
+
+        O escolhido é...
+
+    </div>
+
+
+    <h2 id="resultadoNome"></h2>
+
+</div>
+
+
+
+<script>
+
+
+// ==========================================================
+// 🎬 FILMES
+//
+// COLOQUE AS IMAGENS NA PASTA:
+//
+// res/
+//
+// Exemplo:
+//
+// res/alien.jpg
+//
+// ==========================================================
+
+
+const MOVIES = [
+
+    {
+        nome: "Alien",
+        imagem: "res/alien.jpg"
+    },
+
+    {
+        nome: "Bourne",
+        imagem: "res/bourne.jpg"
+    },
+
+    {
+        nome: "Caçador",
+        imagem: "res/caçador.jpg"
+    },
+
+    {
+        nome: "De Volta para o Futuro",
+        imagem: "res/de volta para o futuro.jpg"
+    },
+
+    {
+        nome: "Divergente",
+        imagem: "res/divergente.jpg"
+    },
+
+    {
+        nome: "Harry Potter",
+        imagem: "res/harry potter.jpg"
+    },
+
+    {
+        nome: "Homem-Aranha",
+        imagem: "res/homem aranha.jpg"
+    },
+
+    {
+        nome: "Indiana Jones",
+        imagem: "res/indianna jones.jpg"
+    },
+
+    {
+        nome: "John Wick",
+        imagem: "res/jhon wick.jpg"
+    },
+
+    {
+        nome: "Jogos Vorazes",
+        imagem: "res/jogos vorazes.jpg"
+    },
+
+    {
+        nome: "Mad Max",
+        imagem: "res/mad-max.jpg"
+    },
+
+    {
+        nome: "Marvel",
+        imagem: "res/marvel.jpg"
+    },
+
+    {
+        nome: "Matrix",
+        imagem: "res/matrix.jpg"
+    },
+
+    {
+        nome: "Maze Runner",
+        imagem: "res/maze runner.jpg"
+    },
+
+    {
+        nome: "Missão Impossível",
+        imagem: "res/missao-impossivel.jpg"
+    },
+
+    {
+        nome: "Pânico",
+        imagem: "res/panico.jpeg"
+    },
+
+    {
+        nome: "Poderoso Chefão",
+        imagem: "res/poderoso chefao.jpg"
+    },
+
+    {
+        nome: "Senhor dos Anéis",
+        imagem: "res/senhor dos aneis.jpg"
+    },
+
+    {
+        nome: "Star Wars",
+        imagem: "res/star wars.jpeg"
+    },
+
+    {
+        nome: "Toy Story",
+        imagem: "res/toy-story.jpg"
+    }
+
+];
+
+
+// ==========================================================
+// ELEMENTOS
+// ==========================================================
+
+const slotEsquerda =
+    document.getElementById(
+        'slotEsquerda'
+    );
+
+
+const slotCentro =
+    document.getElementById(
+        'slotCentro'
+    );
+
+
+const slotDireita =
+    document.getElementById(
+        'slotDireita'
+    );
+
+
+const sortearBtn =
+    document.getElementById(
+        'sortearBtn'
+    );
+
+
+const resultadoCard =
+    document.getElementById(
+        'resultadoCard'
+    );
+
+
+const resultadoNome =
+    document.getElementById(
+        'resultadoNome'
+    );
+
+
+// ==========================================================
+// VARIÁVEIS
+// ==========================================================
+
+let indiceAtual = 0;
+
+let girando = false;
+
+
+// ==========================================================
+// CRIAR PLACEHOLDER
+// ==========================================================
+
+function criarPlaceholder(filme) {
+
+    const div =
+        document.createElement('div');
+
+
+    div.className =
+        'placeholder deslizando';
+
+
+    div.textContent =
+        filme
+            ? filme.nome
+            : '?';
+
+
+    return div;
+}
+
+
+// ==========================================================
+// CRIAR IMAGEM
+// ==========================================================
+
+function criarConteudoSlot(filme) {
+
+
+    if (
+        filme &&
+        filme.imagem
+    ) {
+
+
+        const img =
+            document.createElement('img');
+
+
+        img.src =
+            filme.imagem;
+
+
+        img.alt =
+            filme.nome;
+
+
+        img.className =
+            'deslizando';
+
+
+        // ==================================================
+        // SE A IMAGEM NÃO FOR ENCONTRADA
+        // ==================================================
+
+        img.onerror = function() {
+
+            console.error(
+                "Imagem não encontrada:",
+                filme.imagem
+            );
+
+
+            img.replaceWith(
+                criarPlaceholder(filme)
+            );
+
+        };
+
+
+        return img;
+
+    }
+
+
+    return criarPlaceholder(
+        filme
+    );
+
+}
+
+
+// ==========================================================
+// ATUALIZAR SLOTS
+// ==========================================================
+
+function atualizarSlots() {
+
+
+    const n =
+        MOVIES.length;
+
+
+    if (!n) {
+
+        return;
+
+    }
+
+
+    const idxEsq =
+        (
+            indiceAtual - 1 + n
+        ) % n;
+
+
+    const idxCentro =
+        indiceAtual % n;
+
+
+    const idxDir =
+        (
+            indiceAtual + 1
+        ) % n;
+
+
+    slotEsquerda.innerHTML =
+        '';
+
+
+    slotCentro.innerHTML =
+        '';
+
+
+    slotDireita.innerHTML =
+        '';
+
+
+    slotEsquerda.appendChild(
+
+        criarConteudoSlot(
+            MOVIES[idxEsq]
+        )
+
+    );
+
+
+    slotCentro.appendChild(
+
+        criarConteudoSlot(
+            MOVIES[idxCentro]
+        )
+
+    );
+
+
+    slotDireita.appendChild(
+
+        criarConteudoSlot(
+            MOVIES[idxDir]
+        )
+
+    );
+
+}
+
+
+// ==========================================================
+// GIRAR ROLETA
+// ==========================================================
+
+function girar() {
+
+
+    if (girando) {
+
+        return;
+
+    }
+
+
+    if (MOVIES.length === 0) {
+
+        alert(
+            'Adicione pelo menos um filme!'
+        );
+
+        return;
+
+    }
+
+
+    girando = true;
+
+
+    sortearBtn.disabled =
+        true;
+
+
+    resultadoCard.classList.remove(
+        'show'
+    );
+
+
+    const n =
+        MOVIES.length;
+
+
+    // Sorteia o filme
+
+    const indiceSorteado =
+        Math.floor(
+            Math.random() * n
+        );
+
+
+    // Quantidade de voltas
+
+    const voltasCompletas =
+        3;
+
+
+    const passosNecessarios =
+
+        voltasCompletas * n +
+
+        (
+            (
+                indiceSorteado -
+                indiceAtual +
+                n
+            ) % n
+        );
+
+
+    let passoAtual = 0;
+
+
+    // ======================================================
+    // VELOCIDADE DA ROLETA
+    // ======================================================
+
+    const atraso =
+        (passo) => {
+
+
+            const restante =
+                passosNecessarios -
+                passo;
+
+
+            if (
+                restante >
+                passosNecessarios * 0.6
+            ) {
+
+                return 60;
+
+            }
+
+
+            if (
+                restante >
+                passosNecessarios * 0.3
+            ) {
+
+                return 100;
+
+            }
+
+
+            if (
+                restante > 5
+            ) {
+
+                return 160;
+
+            }
+
+
+            return (
+                220 +
+                (5 - restante) * 40
+            );
+
+        };
+
+
+    // ======================================================
+    // PRÓXIMO PASSO
+    // ======================================================
+
+    function proximoPasso() {
+
+
+        indiceAtual =
+
+            (
+                indiceAtual + 1
+            ) % n;
+
+
+        atualizarSlots();
+
+
+        passoAtual++;
+
+
+        if (
+            passoAtual <
+            passosNecessarios
+        ) {
+
+
+            setTimeout(
+
+                proximoPasso,
+
+                atraso(
+                    passoAtual
+                )
+
+            );
+
+
+        }
+
+        else {
+
+
+            girando = false;
+
+
+            sortearBtn.disabled =
+                false;
+
+
+            mostrarResultado(
+
+                MOVIES[
+                    indiceSorteado
+                ]
+
+            );
+
+        }
+
+    }
+
+
+    proximoPasso();
+
+}
+
+
+// ==========================================================
+// MOSTRAR RESULTADO
+// ==========================================================
+
+function mostrarResultado(filme) {
+
+
+    resultadoNome.textContent =
+
+        '🍿 ' +
+        filme.nome;
+
+
+    resultadoCard.classList.remove(
+        'show'
+    );
+
+
+    requestAnimationFrame(
+
+        () => {
+
+            resultadoCard.classList.add(
+                'show'
+            );
+
+        }
+
+    );
+
+}
+
+
+// ==========================================================
+// BOTÃO
+// ==========================================================
+
+sortearBtn.addEventListener(
+
+    'click',
+
+    girar
+
+);
+
+
+// ==========================================================
+// INICIAR ROLETA
+// ==========================================================
+
+atualizarSlots();
+
+
+// ==========================================================
+// SERVICE WORKER
+// ==========================================================
+
+if (
+    'serviceWorker' in navigator
+) {
+
+
+    window.addEventListener(
+
+        'load',
+
+        () => {
+
+
+            navigator.serviceWorker
+                .register('sw.js')
+                .catch(
+
+                    erro => {
+
+                        console.log(
+                            'Service Worker não registrado:',
+                            erro
+                        );
+
+                    }
+
+                );
+
+        }
+
+    );
+
+}
+
+</script>
+
+
+</body>
+
+</html>
